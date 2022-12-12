@@ -70,8 +70,8 @@ def prob_count(dictionary, mes, u):
             t_prob += m.log(dictionary[word_in][0])
             f_prob += m.log(dictionary[word_in][1])
         else:
-            t_prob += m.log(1 / 2)
-            f_prob += m.log(1 / 2)
+            t_prob += m.log(1 / (ham_mes_count + 2))
+            f_prob += m.log(1 / (spam_mes_count + 2))
     t_prob += m.log(ham_mes_count / (ham_mes_count + spam_mes_count))
     f_prob += m.log(spam_mes_count / (ham_mes_count + spam_mes_count))
     return t_prob > f_prob
