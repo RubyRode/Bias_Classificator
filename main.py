@@ -1,19 +1,13 @@
-import pandas as pa
+
 import math as m
 import os
-from collections import defaultdict
 import re
+from collections import defaultdict
 
-ham_paths_test = ['C:\\Users\\dimas\\PycharmProjects\\Bias_Classificator\\enron1\\ham']
-spam_paths_test = ['C:\\Users\\dimas\\PycharmProjects\\Bias_Classificator\\enron1\\spam']
-ham_paths_learn = ['C:\\Users\\dimas\\PycharmProjects\\Bias_Classificator\\enron3\\ham', 'C:\\Users\\dimas'
-                                                                                         '\\PycharmProjects' +
-                   '\\Bias_Classificator\\enron2\\ham', 'C:\\Users\dimas\\PycharmProjects\\Bias_Classificator\\enron3'
-                                                        '\\ham']
-spam_paths_learn = ['C:\\Users\\dimas\\PycharmProjects\\Bias_Classificator\\enron3\\spam', 'C:\\Users\\dimas'
-                                                                                           '\\PycharmProjects' +
-                    '\\Bias_Classificator\\enron2\\spam', 'C:\\Users\dimas\\PycharmProjects\\Bias_Classificator\\enron3'
-                                                          '\\spam']
+ham_paths_test = ['enron1/ham']
+spam_paths_test = ['enron1/spam']
+ham_paths_learn = ['enron3/ham', 'enron2/ham', 'enron1/ham']
+spam_paths_learn = ['enron3/spam', 'enron2/spam', 'enron1/spam']
 
 
 def remove_syms(s):
@@ -24,7 +18,7 @@ def remove_syms(s):
 def dic_update(abs_path, dic, k):
     """updates amount of words_in in dictionary"""
     for mes in os.listdir(abs_path):
-        with open(abs_path + "\\" + mes, "r") as f:
+        with open(abs_path + "/" + mes, "r", encoding='unicode_escape') as f:
             txt = f.read()
             words_in = remove_syms(str(txt))
             for token in words_in:
@@ -56,14 +50,14 @@ for p in ham_paths_learn:
 new_dic = defaultdict(lambda: [0, 0])
 
 for word in new_di:
-    new_dic[word][0] = (new_di[word][0] + 1) / (ham_mes_count + 2)
     new_dic[word][1] = (new_di[word][1] + 1) / (spam_mes_count + 2)
+    new_dic[word][0] = 1 - new_dic[word][1]
 
 spam_mes_count = len(os.listdir(spam_paths_test[0]))
 ham_mes_count = len(os.listdir(ham_paths_test[0]))
 
 
-def prob_count(dictionary, mes, u):
+def prob_count(dictionary, mes):
     t_prob = f_prob = 0
     for word_in in mes:
         if word_in in dictionary:
@@ -81,19 +75,19 @@ i = 0
 right = 0
 for path_l in spam_paths_test:
     for message in os.listdir(path_l):
-        with open(path_l + "\\" + message, "r") as f:
+        with open(path_l + "/" + message, "r", encoding='unicode_escape') as f:
             text = f.read()
             words = remove_syms(text)
-            if prob_count(new_dic, words, i):
+            if prob_count(new_dic, words):
                 right += 1
             i += 1
 
 for path_l in ham_paths_test:
     for message in os.listdir(path_l):
-        with open(path_l + "\\" + message, "r") as f:
+        with open(path_l + "/" + message, "r", encoding='unicode_escape') as f:
             text = f.read()
             words = remove_syms(text)
-            if prob_count(new_dic, words, i):
+            if prob_count(new_dic, words):
                 right += 1
             i += 1
 
